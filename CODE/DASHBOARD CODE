@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Status Dashboard</title>
+    <meta http-equiv="refresh" content="5">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
 
+        header {
+            background-color: #1F3A93; /* Dark Blue */
+            color: white;
+            padding: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px auto;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: white;
+            width: 280px;
+            padding: 30px;
+            margin: 15px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .status-ok {
+            color: #28a745; /* Green */
+        }
+
+        .status-bad {
+            color: #dc3545; /* Red */
+        }
+
+        .status-wait {
+            color: #fd7e14; /* Orange */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        📡 Device Status Dashboard
+    </header>
+
+    <div class="container">
+        <!-- Fall Detection -->
+        <div class="card">
+            <h2>Fall Detection</h2>
+            {% if data.fall == "Fall Detected" %}
+                <p class="value status-bad">{{ data.fall }}</p>
+            {% else %}
+                <p class="value status-ok">{{ data.fall }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Heart Rate -->
+        <div class="card">
+            <h2>Heart Rate</h2>
+            <p class="value">{{ data.heart_rate }} bpm</p>
+        </div>
+
+        <!-- SMS Status -->
+        <div class="card">
+            <h2>SMS Status</h2>
+            {% if data.sms == "Sent" %}
+                <p class="value status-ok">✅ {{ data.sms }}</p>
+            {% else %}
+                <p class="value status-wait">⌛ {{ data.sms }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Device Status -->
+        <div class="card">
+            <h2>Device Status</h2>
+            {% if data.device_status == "Some Devices Offline" %}
+                <p class="value status-bad">{{ data.device_status }}</p>
+            {% else %}
+                <p class="value status-ok">{{ data.device_status }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Number of Connected Devices -->
+        <div class="card">
+            <h2>Connected Devices</h2>
+            <p class="value">{{ data.num_devices }}</p>
+        </div>
+    </div>
+</body>
+</html>
