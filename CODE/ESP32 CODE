@@ -1,1 +1,76 @@
+# This is just a test code check your setup 
+# Actual code is different
+# First check your setup with this code 
 
+
+#include <Wire.h>
+#include "Adafruit_MPU6050.h"
+#include "Adafruit_Sensor.h"
+#include "MAX30105.h"
+#include "heartRate.h"
+
+Adafruit_MPU6050 mpu;
+MAX30105 particleSensor;
+
+// Pins for LED and Buzzer
+#define LED_PIN 2
+#define BUZZER_PIN 4
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  // LED & Buzzer setup
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+
+  // MPU6050 setup
+  if (!mpu.begin()) {
+    Serial.println("Failed to find MPU6050 chip!");
+    while (1);
+  }
+  Serial.println("MPU6050 ready!");
+
+  // MAX30102 setup
+  if (!particleSensor.begin(Wire, I2C_SPEED_STANDARD)) {
+    Serial.println("MAX30102 not found!");
+    while (1);
+  }
+  Serial.println("MAX30102 ready!");
+  
+  particleSensor.setup(); // Default settings
+}
+
+void loop() {
+  // ---- MPU6050 ----
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  // Show accelerometer data
+  Serial.print("Accel X: "); Serial.print(a.acceleration.x);
+  Serial.print(" Y: "); Serial.print(a.acceleration.y);
+  Serial.print(" Z: "); Serial.println(a.acceleration.z);
+
+  // Simple fall detection
+  if (abs(a.acceleration.x) > 15 || abs(a.acceleration.y) > 15 || abs(a.acceleration.z) > 20) {
+    digitalWrite(LED_PIN, HIGH);
+    digitalWrite(BUZZER_PIN, HIGH);
+    Serial.println("⚠️ Sudden motion detected!");
+  } else {
+    digitalWrite(LED_PIN, LOW);
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+
+  // ---- MAX30102 ----
+  long irValue = particleSensor.getIR();
+
+  if (irValue > 50000) { // Finger detected
+    Serial.print("IR: "); Serial.println(irValue);
+    digitalWrite(LED_PIN, HIGH);
+  } else {
+    digitalWrite(LED_PIN, LOW);
+    Serial.println("Place finger on sensor...");
+  }
+
+  delay(200);
+}
