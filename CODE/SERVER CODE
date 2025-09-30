@@ -1,1 +1,19 @@
+from flask import Flask, render_template
+import random
 
+app = Flask(_name_)
+
+@app.route("/")
+def index():
+    # Dummy values (change on each refresh)
+    data = {
+        "fall": random.choice(["No Fall Detected", "Fall Detected"]),
+        "heart_rate": random.randint(60, 120),  # bpm
+        "sms": random.choice(["Sent", "Not Sent"]),
+        "device_status": random.choice(["All Devices OK", "Some Devices Offline"]),
+        "num_devices": random.randint(1, 10)  # Number of connected devices
+    }
+    return render_template("index.html", data=data)
+
+if _name_ == "_main_":
+    app.run(debug=True)
